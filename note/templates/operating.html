@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<a href="{% url 'note:index' %}">←back</a>
+<h1 id="book_name" onclick="inv()" style="width: 45px;">{{ book.name }}</h1>
+<form action="{% url 'note:op' book.id %}" method="post" id="change_book_name" style="display: none">
+    <h1>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button id="submit" type="submit" style="display: none"></button>
+    </h1>
+</form>
+<h3 class="SLT" onclick="edit_description();">{{ book.description|linebreaks }}</h3>
+<h4 class="SLT">Public: {{ book.public }} <a href="javascript:confirm_to_change_status()">Change</a></h4>
+<h4 class="SLT">Creating time: {{ book.date_added }}</h4>
+<h4 class="SLT">Last edited: {{ book.date_edited }}</h4>
+
+{% for sheet in sheets %}
+<div class="list-item-a" style="text-indent: 4px">
+    <font size="4" face="Arial">{{ sheet.date_added }}</font>
+    <a href="{% url 'note:sheet' sheet.id %}">
+        <button style="float: right" class="operating-button">View</button>
+    </a>
+    <a href="{% url 'note:sort_out' sheet.id %}">
+        <button style="float: right" class="operating-button">Sort out</button>
+    </a>
+</div>
+{% empty %}
+<p>This book hasn't been answered yet.</p>
+{% endfor %}
+<div class="screen-cover" style="display: none" id="cover"></div>
+<div class="floating_window" style="display: none; text-align: center" id="desc_edit">
+    <h3>Edit Description</h3>
+    <form method="post" action="{% url 'note:edit_desc' book.id %}">
+        {% csrf_token %}
+        {{ desc_editor.as_p }}
+        <button type="submit" name="submit" id="edit_desc" style="display: none"></button>
+    </form>
+</div>
+<script>
+    function trim(str){
+　　     return str.replace(/(^\s*)|(\s*$)/g, "");
+　　 }
+    function heredoc(fn) {
+        return fn.toString().split('\n').slice(1,-1).join('\n') + '\n'
+    }
+    var tmpl = heredoc(function(){/*
+        {{ book.description|safe }}
+    */});
+    function inv(){
+        var ele = document.getElementById("book_name");
+        ele.style.display = "none";
+        ele = document.getElementById("change_book_name");
+        ele.style.display = "inline";
+        var ele = document.getElementById("book_name_input");
+        ele.focus();
+    }
+    function vis(){
+        var ele = document.getElementById("change_book_name");
+        ele.style.display = "none";
+        ele = document.getElementById("book_name");
+        ele.style.display = "block";
+    }
+    function click(id, input_id, check_same, vis_func){
+        var val = document.getElementById(input_id).value;
+        if(val != check_same){
+            if(document.all){
+                document.getElementById(id).click();
+            }else{
+                var event = document.createEvent("MouseEvents");
+                event.initEvent("click", true, true);
+                document.getElementById(id).dispatchEvent(event);
+            }
+        }else{
+            vis_func();
+        }
+    }
+    function edit_description(){
+        var float_window = document.getElementById("desc_edit");
+        float_window.style.display = "block";
+        var textbox = document.getElementById("description_input");
+        textbox.focus();
+        var ele = document.getElementById("cover");
+        ele.style.display = "block";
+    }
+    function cancel(){
+        var ele = document.getElementById("desc_edit");
+        ele.style.display = "none";
+        ele = document.getElementById("cover");
+        ele.style.display = "none";
+    }
+        var bni = document.getElementById("book_name_input");
+    bni.onblur = function(){
+        click("submit", "book_name_input", "{{ book.name }}", vis);
+    };
+    bni = document.getElementById("description_input");
+    bni.onblur = function(){
+        click("edit_desc", "description_input", trim(tmpl), cancel);
+    };
+    function confirm_to_change_status(){
+        if(confirm("Are you sure to change the public status?(Others can only see this book when you set the status to True.)")){
+            window.location.href = "{% url 'note:change' book.id %}";
+        }
+    }
+</script>
+{% endblock content %}

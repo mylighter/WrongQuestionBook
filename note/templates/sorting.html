@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<a href="{% url 'note:op' sheet.book.id %}">←back</a>
+<form method="post" action="{% url 'note:sort_out' sheet.id %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button name="submit">Submit</button>
+    <input type="hidden" value="next" />
+</form>
+{% endblock %}

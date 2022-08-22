@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<a href="{% url 'note:index' %}">←back</a>
+{% for question in questions %}
+<div>
+    <h4>{{ question.stem }}</h4>
+</div>
+{% endfor %}
+{% endblock content %}

@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<a href="{% url 'note:index' %}">←back</a>
+<script type="text/javascript">
+function display_formatted_time(text_id, time){
+    var text = document.getElementById(text_id);
+    var min = Math.floor(time / 60);
+    var sec = time % 60;
+    text.innerHTML = "Timer: " + min+":"+sec;
+}
+
+function changeCAnswer(question, choice, answerSheet, multiple){
+    var choices = document.getElementsByName(question.id + "-choice");
+    for(i in answerSheet){
+        if(answerSheet[i].question == question.id){
+            var ch_num = parseInt(choice);
+            if(!multiple){
+                if(answerSheet[i].answer[0] != ch_num){
+                    answerSheet[i].answer[0] = ch_num;
+                }else{
+                    answerSheet[i].answer[0] = null;
+                }
+            }else{
+                if(answerSheet[i].answer.includes(ch_num)){
+                    answerSheet[i].answer = answerSheet[i].answer.filter(function (item){return item != ch_num && item;});
+                }else{
+                    answerSheet[i].answer.push(ch_num);
+                }
+            }
+            for(j in choices){
+                if(j < choices.length){
+                    if(answerSheet[i].answer.includes(parseInt(choices[j].id))){
+                        choices[j].style.background = "#2F2";
+                    }else{
+                        choices[j].style.background = "#CCC";
+                    }
+                }
+            }
+            break;
+        }
+    }
+
+}
+
+
+function post_answer_sheet(answerSheet, time){
+    var val;
+    for(i in answerSheet){
+        if(answerSheet[i].type=="f"){
+            val = document.getElementById("comp-" + answerSheet[i].question);
+            answerSheet[i].answer = val.value;
+        }
+    }
+    var xml = new XMLHttpRequest();
+    xml.open("post", "{% url 'note:post_answer' %}", true);
+    var data = {
+        "book": {{ book.id }},
+        "answers": answerSheet,
+        "time": time
+    };
+    xml.setRequestHeader("Content-Type", "application/json");
+    xml.send(JSON.stringify(data));
+    xml.onreadystatechange = function(){
+        if(xml.readyState == 4 && xml.status == 200){
+            alert("Successfully Post");
+            window.location.href = "{% url 'note:index' %}";
+        }
+    }
+}
+
+
+function load_questions(){
+    var box = document.getElementById("confirming_box");
+    box.style.display = "none";
+    var time = 0;
+    var timer = setInterval(function(){
+        time++;
+        display_formatted_time("timer", time);
+    }, 1000);
+    var xml = new XMLHttpRequest();
+    xml.onreadystatechange = function (){
+        if(xml.readyState == 4 && xml.status == 200){
+            var result = eval("(" + JSON.parse(xml.responseText) + ")");
+            var answerSheet = [];
+            for(i in result){
+                data = {
+                    "type": result[i].type,
+                    "question": result[i].id,
+                    "answer": [null]
+                };
+                answerSheet.push(data);
+            }
+            for(i in result){
+                if(result[i].type == "c"){
+                    showChoosingPanel(document, result[i], changeCAnswer, answerSheet, result[i].multiple, result[i].images, "{{ MEDIA_URL }}");
+                }else{
+                    showFillingPanel(document, result[i]);
+                }
+            }
+            document.body.appendChild(document.createElement("br"));
+            var submit = document.createElement("button");
+            submit.onclick = function(){
+                post_answer_sheet(answerSheet, time);
+            }
+            submit.innerHTML = "Submit";
+            submit.class = "operating-button";
+            document.body.appendChild(submit);
+            var link = document.createElement("a");
+            link.href = "{% url 'note:op' book.id %}"
+            var cancel = document.createElement("button");
+            cancel.innerHTML = "Cancel";
+            link.appendChild(cancel);
+            document.body.appendChild(link);
+        }
+    };
+    ajaxGet("{% url 'note:get_question' book.id %}", xml);
+};
+</script>
+
+<div class="floating_window" style="text-align: center" id="confirming_box">
+    <h2 style="font-family: Arial">您即将开始答题</h2>
+    <p style="font-size: 12px">错题本：{{ book.name }}(ID={{ book.id }})</p>
+    <p style="margin: 0px 10px; font-size: 12px">
+        注意事项：答题过程中将有计时器计时，答题结束点击提交时自动停止，最终得分与答题耗时相关，如果中途退出，则此次答题自动作废。
+    </p>
+    <button onclick="load_questions()" style="background: #29F;" class="confirming-button">点击开始答题</button>
+    <a href="{% url 'note:op' book.id %}">
+        <button style="background: #DDD;" class="confirming-button">放弃答题</button>
+    </a>
+    <br/>
+</div>
+
+<div id="info_box" class="wall-card">
+    <p style="font-family: Arial; font-weight: bold">Information</p>
+    <p id="timer">0:0</p>
+</div>
+{% endblock %}

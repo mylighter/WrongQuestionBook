@@ -1,0 +1,1 @@
+web: gunicorn wrong_note.wsgi __log-file -

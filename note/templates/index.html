@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    <h1>我的错题本</h1>
+    <p id="data" style="display:none"></p>
+    <button onclick="vis()" class="operating-button" style="height: 24px">+Add a Folder</button>
+    <div style="height: 8px"></div>
+    {% for folder in folders %}
+    <div class="folder" id="{{ folder.id }}" ondrop="refactor(event, {{ folder.id }}, {% url 'note:refactor' %}, '');"
+         ondragover="event.preventDefault()">
+        <div id="folder-heading" style="height: 24px; width: 100%">
+            <font size="4" style="text-indent: 2em; font-weight: bold" face="Arial">
+                {{ folder.name }}
+                <a style="float: right" href="{% url 'note:upload' folder.id %}">+Add a Book</a>
+            </font>
+        </div>
+
+        <div style="height: 2px; width: 100%;background: #DEDEDE"></div>
+        {% for book in folder.book_set.all %}
+        <div class="floating-card" id="desc-{{ book.id }}">{{ book.description }}</div>
+        <div class="item" onmouseenter="set_display({{ book.id }}, true)" draggable="true" id="book-{{ book.id }}">
+            <script>
+                var book_id = {{ book.id }};
+                var box = document.getElementById("book-" + book_id);
+                box.onmousemove = function(e){go_to_mouse(e, "desc-" + book_id);};
+                box.onmouseleave = function(e){set_display("desc-" + book_id, false);};
+                box.onmouseenter = function(e){set_display("desc-" + book_id, true);};
+                box.ondragstart = function(e){
+                    e.dataTransfer.setData("book", {{ book.id }});
+                    e.dataTransfer.setData("last_folder", {{ folder.id }});
+                };
+            </script>
+            <font size="4" face="Arial" style="text-indent: 6px;float: left; color: #333">
+                {{ book.name }}
+            </font>
+            <a href="{% url 'note:question_page' book.id %}">
+                <button class="operating-button" style="float: right">Start Answering</button>
+            </a>
+            <a href="{% url 'note:op' book.id %}">
+                <button class="operating-button" style="float: right">Operating</button>
+            </a>
+        </div>
+        <div style="height: 2px"></div>
+        {% endfor %}
+    </div>
+    <div style="height: 5px"></div>
+    {% empty %}
+    <p>There haven't been any folders yet.</p>
+    {% endfor %}
+    <div class="screen-cover" id="cover" style="display: none"></div>
+    <div id="folder_adding_form" style="display:none; text-align: center" class="floating_window">
+        <h3>Add a Folder</h3>
+        <form action="{% url 'note:index' %}" method="post" id="new_folder">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="submit" id="submit_form" style="display: none">Submit</button>
+        </form>
+    </div>
+</div>
+<div>
+    <h1>共享错题本</h1>
+    {% for public_book in library %}
+    <div class="folder" style="float: left">
+        <div style="float:left; text-indent:4px">
+            <h3>{{ public_book.name }}</h3>
+            <p>Uploader: {{ public_book.uploader }}</p>
+            <p>Description: {{ public_book.description }}</p>
+        </div>
+        <div style="float: right">
+            <a href="{% url 'note:question_page' public_book.id %}">
+                <button class="operating-button" style="float:right;margin: 15% 2px">Start Answering</button>
+            </a>
+            <br>
+            <a href="{% url 'note:op' public_book.id %}">
+                <button class="operating-button" style="float:right;margin: 15% 2px">Operating</button>
+            </a>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+<script>
+    var bni = document.getElementById("new_folder_name");
+    bni.onblur = function(){
+        if(bni.value != ""){
+            click("submit_form");
+        }else{
+            inv();
+        }
+    }
+    function vis(){
+        var ele = document.getElementById("folder_adding_form");
+        ele.style.display = "block";
+        ele = document.getElementById("cover");
+        ele.style.display = "block";
+        ele = document.getElementById("new_folder_name");
+        ele.focus();
+    }
+    function inv(){
+        var ele = document.getElementById("folder_adding_form");
+        ele.style.display = "none";
+        ele = document.getElementById("cover");
+        ele.style.display = "none";
+    }
+    function show_updates(){
+        var box = document.getElementById("changelog");
+        if(box.style.display == "block"){
+            box.innerHTML = "";
+            box.style.width = "40%";
+            box.style.height = "60%";
+            box.style.left = "30%";
+            box.style.top = "20%";
+            box.style.display = "inline";
+            {% for log in changelog %}
+            var log = document.createElement("li");
+            log.innerHTML = "{{ log.version }}\t{{ log.content }}";
+            log.style.margin = "10px";
+            box.appendChild(log);
+            {% endfor %}
+        }else{
+            box.innerHTML = "Updates";
+            box.style = "right: 0px; bottom: 0px; width: 48px; height: 16px; display: block";
+        }
+    }
+</script>
+
+<div style="right: 0px; bottom: 0px; width: 48px; height: 16px; display: inline"
+     class="floating-card" onclick="show_updates()" id="changelog">Updates</div>
+{% endblock %}

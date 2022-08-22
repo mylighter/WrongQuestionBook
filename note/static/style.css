@@ -1,0 +1,180 @@
+.blue-title-div{
+    background: #59F;
+    border-radius: 0px 0px 4px 4px;
+    top: 0px; left: 0px;
+    width: 100%;
+    height: 48px;
+    position: absolute;
+    box-shadow: 0 0 10px #000;
+}
+
+.choosing-button{
+    background: #CCC;
+    border: gray solid 1px;
+    border-radius: 2px;
+    width: 80%;
+    height: 32px;
+    margin: 0px 10px;
+    text-indent: 4px
+}
+
+.operating-button{
+    height: 23px;
+    /* 文字颜色 */
+    color: #0099CC;
+    /* 清除背景色 */
+    background: transparent;
+    /* 边框样式、颜色、宽度 */
+    border: 1px solid #0099CC;
+    /* 给边框添加圆角 */
+    border-radius: 6px;
+    /* 字母转大写 */
+    border: none;
+    color: #eeeeee;
+    padding: 2px 8px;
+    display: inline-block;
+    font-size: 10px;
+    margin: 1px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+.operating-button {
+    background-color: #eeeeee;
+    color: black;
+    border: 1px solid #a7c4cd;
+}
+/* 悬停样式 */
+.operating-button:hover {
+    background-color: #a7c4cd;
+    color: white;
+}
+
+.folder {
+    background: #fafafa;
+    border: 1px solid #CCC;
+    border-radius: 2px;
+    box-shadow: 0 0 4px #444;
+}
+
+.floating_window {
+    position: absolute;
+    left: 30%;
+    top: 40%;
+    width: 40%;
+    background: #fefefe;
+    border-radius: 4px;
+    border: none;
+    box-shadow: 0 0 4px #222
+}
+
+.list-item-a {
+    border: 1px #DADADA solid;
+    width: 100%;
+    float: left;
+    height: 25px;
+    border-radius: 2px;
+    background: #FAFAFA
+}
+
+.SLT {
+    color: #222;
+}
+
+.screen-cover {
+    background: #151515;
+    opacity: 0.8;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+.item {
+    width: 100%;
+    height: 24px;
+    background: #FEFEFE;
+    box-shadow: 0 0 1px #000;
+    border-radius: 4px;
+    border: none
+}
+
+.floating-card {
+    position: absolute;
+    width: 90px;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 0 6px #333333;
+    background: #FFFFFF;
+    display: none;
+    font-size: 8px;
+}
+
+.card {
+    padding: 2px;
+    width: 84%;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 0 6px #333333;
+    background: #FEFEFE;
+}
+
+.sign {
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background: #FE0101;
+    margin: 10px;
+    float: right
+}
+
+.confirming-button {
+    border: 1px gray solid;
+    border-radius: 4px
+}
+
+.wall-card {
+    top: 96px;
+    position: absolute;
+    right: 0px;
+    box-shadow: 2px 2px 5px 0px #555;
+    border-radius: 4px 0px 0px 4px;
+    width: 12%;
+    text-align: right;
+}
+
+.mouseover-button1{
+    float:right;
+    background: #59F;
+    border: none;
+    height: 20px;
+    border-radius: 4px;
+    transition-duration: 0.2s;
+}
+
+.mouseover-button1:hover{
+    background: #37F;
+}
+
+.mouseover-button2{
+    text-align: center;
+    background: #FFFEFE;
+    border: none;
+    height: 20px;
+    width: 100%;
+    border-radius: 4px;
+    transition-duration: 0.2s;
+}
+
+.mouseover-button2:hover{
+    background: #DDD;
+}
+
+.simple-a{
+    text-decoration: none;
+    color: black
+}

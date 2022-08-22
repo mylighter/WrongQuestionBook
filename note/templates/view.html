@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<a href="{% url 'note:op' book.id %}">←back</a>
+<h2>Book: {{ book.name }}</h2>
+<h3>Time: {{ sheet.date_added }}</h3>
+<h3>Duration: {{ sheet.used_time }}s</h3>
+<hr>
+{% for question in choosing %}
+<div class="card">
+    <div id="c-sign-{{ question.id }}" class="sign"></div>
+    {% if question.correct %}
+    <script>document.getElementById("c-sign-{{ question.id }}").style.background = "#66ccff";</script>
+    {% endif %}
+    <h2 style="text-indent: 10px">{{ question.question.stem }}</h2>
+    {% for choice in question.question.choice_set.all %}
+    <div class="choosing-button" id="{{ choice.id }}">
+        <p style="text-align: center; line-height: 4px">{{ choice.content }}</p>
+    </div>
+    <script>
+        var btn = document.getElementById("{{ choice.id }}");
+        {% for ans in question.userchoiceanswer_set.all %}
+        {% if choice == ans.choice %}
+        btn.style.background = "#22FF22";
+        {% endif %}
+        {% endfor %}
+        {% if choice.correct %}
+        btn.style.border = "2px #55C8FA solid";
+        {% endif %}
+    </script>
+    {% endfor %}
+    <div style="height: 8px"></div>
+</div>
+<br>
+{% endfor %}
+{% for completion in completions %}
+<div class="card">
+    <div id="f-sign-{{ question.id }}" class="sign"></div>
+    {% if completion.correct %}
+    <script>document.getElementById("f-sign-{{ question.id }}").style.background = "#66ccff";</script>
+    {% endif %}
+    <h2 style="text-indent: 10px">{{ completion.question.stem }}</h2>
+    <p style="text-indent: 10px">User's answer: {{ completion.answer }}</p>
+    <p style="text-indent: 10px">
+        Correct answer: {% for one in completion.question.answer_set.all %} {{ one.content }} /  {% endfor %}
+    </p>
+</div>
+{% endfor %}
+{% endblock %}
