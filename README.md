@@ -6,6 +6,7 @@ So I will write the license and manual instructions in Chinese then.
 这是一个错题管理器，我只是想给自己带来一定的方便，同时给他人带来可能的方便。
 请确保你有Python运行环境，在manage.py所在目录打开cmd，使用
 ```
+pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
