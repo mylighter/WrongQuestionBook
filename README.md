@@ -1,5 +1,5 @@
 # WrongQuestionBook
-A program for Chinese students to sort out their wrong questions more easily.
+This is a program for Chinese students to collect and re-do the questions that they made mistakes in more easily.
 So I will write the license and manual instructions in Chinese then.
 
 
@@ -12,4 +12,4 @@ python manage.py runserver
 ```
 即可运行，有bug可报告issue。
 
-开源，如若传播请标明原作者，[官方部署网址](http://wq-book.herokuapp.com)
+开源，如若传播请标明原作者。
